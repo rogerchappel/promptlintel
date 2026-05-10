@@ -3,20 +3,42 @@
   "version": "0.1.0",
   "description": "Local prompt-file linter for prompt-injection footguns, secret-like strings, unsafe tool wording, and missing provenance.",
   "type": "module",
-  "main": "./src/index.js",
+  "bin": {
+    "promptlintel": "./dist/cli.js"
+  },
+  "main": "./dist/index.js",
   "exports": {
-    ".": "./src/index.js"
+    ".": "./dist/index.js"
   },
   "files": [
-    "src",
-    "README.md"
+    "dist",
+    "README.md",
+    "LICENSE",
+    "docs/PRD.md"
   ],
   "scripts": {
-    "test": "node --test",
+    "test": "node --test tests/*.test.mjs",
+    "check": "tsc --noEmit",
+    "build": "tsc && node scripts/make-executable.mjs",
+    "smoke": "bash scripts/smoke.sh",
     "package:smoke": "npm pack --dry-run",
-    "release:check": "npm test && npm run package:smoke"
+    "release:check": "npm test && npm run check && npm run build && npm run smoke && npm run package:smoke"
   },
-  "keywords": [],
+  "keywords": [
+    "prompt-injection",
+    "lint",
+    "agents",
+    "security",
+    "markdown",
+    "cli"
+  ],
   "author": "Roger Chappel",
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.19",
+    "typescript": "^5.8.3"
+  }
 }
