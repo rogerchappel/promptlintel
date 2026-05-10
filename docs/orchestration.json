@@ -1,0 +1,26 @@
+{
+  "project": "promptlintel",
+  "repository": "rogerchappel/promptlintel",
+  "waves": [
+    "scaffold",
+    "planning",
+    "rules-engine",
+    "reporters",
+    "fixtures-tests",
+    "publication"
+  ],
+  "requiredChecks": [
+    "npm test",
+    "npm run check",
+    "npm run build",
+    "npm run smoke",
+    "bash scripts/validate.sh",
+    "node dist/cli.js scan examples --fail-on critical --format markdown"
+  ],
+  "safety": {
+    "telemetry": false,
+    "network": false,
+    "mutatesInputs": false,
+    "hiddenWrites": false
+  }
+}
