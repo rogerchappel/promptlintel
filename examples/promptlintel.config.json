@@ -1,0 +1,5 @@
+{
+  "failOn": "high",
+  "disabledRules": [],
+  "includeDefaultRules": true
+}
