@@ -54,7 +54,6 @@ jobs:
 
           if [ ! -f package.json ]; then
             echo "No package.json found; skipping Node checks."
-            echo "TODO: add install, lint, test, typecheck, or build commands when this template becomes an app or package."
             exit 0
           fi
 
@@ -64,8 +63,4 @@ jobs:
             npm install
           fi
 
-          npm test
-          npm run check
-          npm run build
-          npm run smoke
-          bash scripts/validate.sh
+          npm run release:check
