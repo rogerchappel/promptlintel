@@ -14,7 +14,10 @@
     "dist",
     "README.md",
     "LICENSE",
-    "docs/PRD.md"
+    "docs/PRD.md",
+    "SECURITY.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md"
   ],
   "scripts": {
     "test": "npm run build && node --test tests/*.test.mjs",
