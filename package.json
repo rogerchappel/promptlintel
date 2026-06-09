@@ -40,5 +40,13 @@
   "devDependencies": {
     "@types/node": "^22.15.19",
     "typescript": "^5.8.3"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rogerchappel/promptlintel.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rogerchappel/promptlintel/issues"
+  },
+  "homepage": "https://github.com/rogerchappel/promptlintel#readme"
 }
