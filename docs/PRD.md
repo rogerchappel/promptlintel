@@ -23,7 +23,7 @@ Prompt and agent instruction files are code-adjacent but rarely linted. A contri
 ## Goals
 
 - Provide a useful offline CLI for scanning prompt-like Markdown/text files.
-- Ship deterministic rules for risky phrases, secret-like values, TODO safety gaps, and missing attribution/frontmatter.
+- Ship deterministic rules for risky phrases, secret-like values, unresolved safety placeholders, and missing attribution/frontmatter.
 - Produce human-readable Markdown and machine-readable JSON reports.
 - Support allowlist comments/config so teams can tune findings without hiding them.
 - Include fixtures and tests that demonstrate safe, risky, and intentionally allowed prompts.
