@@ -13,6 +13,8 @@ export function renderMarkdown(report: ScanReport): string {
     `- Findings: ${report.findingCount}`,
     `- Fail threshold: ${report.failOn}`,
     `- Status: ${report.ok ? 'pass' : 'fail'}`,
+    `- Severity summary: ${renderCounts(report.severityCounts)}`,
+    `- Category summary: ${renderCounts(report.categoryCounts)}`,
     '',
     '## Findings',
     ''
@@ -44,4 +46,10 @@ function renderFinding(finding: Finding): string[] {
 
 function escapeTicks(value: string): string {
   return value.replaceAll('`', '\\`');
+}
+
+function renderCounts(counts: Record<string, number>): string {
+  const entries = Object.entries(counts).filter(([, count]) => count > 0);
+  if (entries.length === 0) return 'none';
+  return entries.map(([name, count]) => `${name}=${count}`).join(', ');
 }

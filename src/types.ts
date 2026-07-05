@@ -50,6 +50,8 @@ export interface ScanReport {
   tool: string;
   files: string[];
   findingCount: number;
+  severityCounts: Record<Severity, number>;
+  categoryCounts: Partial<Record<RuleCategory, number>>;
   failOn: Severity;
   findings: Finding[];
 }
