@@ -12,9 +12,10 @@
   },
   "files": [
     "dist",
+    "SKILL.md",
+    "docs",
     "README.md",
     "LICENSE",
-    "docs/PRD.md",
     "SECURITY.md",
     "CHANGELOG.md",
     "CONTRIBUTING.md"

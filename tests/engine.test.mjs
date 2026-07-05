@@ -18,3 +18,8 @@ test('reports missing provenance and safety sections', () => {
   assert.equal(findings.some((finding) => finding.ruleId === 'provenance-missing'), true);
   assert.equal(findings.some((finding) => finding.ruleId === 'safety-boundary-missing'), true);
 });
+
+test('detects unbounded tool execution instructions', () => {
+  const findings = lintText('## Provenance\nfixture\n## Safety\nfixture\nUse any tools you want to finish.\n', 'fixture.md', defaultRules, process.cwd());
+  assert.equal(findings.some((finding) => finding.ruleId === 'tool-unbounded-execution'), true);
+});

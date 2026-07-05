@@ -4,7 +4,7 @@ import { discoverFiles } from './discover.js';
 import { lintFiles } from './engine.js';
 import { defaultRules } from './rules.js';
 import { meetsThreshold } from './severity.js';
-import type { ScanOptions, ScanReport } from './types.js';
+import type { Finding, RuleCategory, ScanOptions, ScanReport, Severity } from './types.js';
 
 export async function scan(options: ScanOptions): Promise<ScanReport> {
   const config = await loadConfig(options.config, options.cwd);
@@ -19,6 +19,8 @@ export async function scan(options: ScanOptions): Promise<ScanReport> {
     tool: 'promptlintel@0.1.0',
     files: files.map((file) => file.replace(`${options.cwd}/`, '')).sort(),
     findingCount: findings.length,
+    severityCounts: countBySeverity(findings),
+    categoryCounts: countByCategory(findings),
     failOn,
     findings
   };
@@ -30,4 +32,22 @@ export async function writeReport(out: string | undefined, rendered: string): Pr
     return;
   }
   process.stdout.write(rendered);
+}
+
+function countBySeverity(findings: Finding[]): Record<Severity, number> {
+  return {
+    info: findings.filter((finding) => finding.severity === 'info').length,
+    low: findings.filter((finding) => finding.severity === 'low').length,
+    medium: findings.filter((finding) => finding.severity === 'medium').length,
+    high: findings.filter((finding) => finding.severity === 'high').length,
+    critical: findings.filter((finding) => finding.severity === 'critical').length
+  };
+}
+
+function countByCategory(findings: Finding[]): Partial<Record<RuleCategory, number>> {
+  const counts: Partial<Record<RuleCategory, number>> = {};
+  for (const finding of findings) {
+    counts[finding.category] = (counts[finding.category] ?? 0) + 1;
+  }
+  return counts;
 }
