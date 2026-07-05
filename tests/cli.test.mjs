@@ -7,6 +7,8 @@ test('CLI emits JSON findings for risky fixture', () => {
   assert.equal(result.status, 1);
   const parsed = JSON.parse(result.stdout);
   assert.equal(parsed.findings.some((finding) => finding.ruleId === 'secret-api-key'), true);
+  assert.equal(parsed.severityCounts.critical >= 1, true);
+  assert.equal(parsed.categoryCounts.secret >= 1, true);
 });
 
 test('CLI passes safe fixture', () => {

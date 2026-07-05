@@ -38,6 +38,15 @@ export const defaultRules: Rule[] = [
     patterns: [/(send|email|post|tweet|publish|deploy|delete|purchase|charge|transfer|dm) .{0,80}\b(without|no need for|skip) (asking|approval|confirmation|permission)/i, /automatically (send|email|post|tweet|publish|deploy|delete|purchase|charge|transfer|dm)/i]
   },
   {
+    id: 'tool-unbounded-execution',
+    title: 'Unbounded tool execution wording',
+    category: 'external-action',
+    severity: 'high',
+    description: 'Instructions that grant broad tool execution without scoped inputs, dry-run boundaries, or approval are unsafe for reusable agent prompts.',
+    remediation: 'Scope tool use to named inputs and require dry-run or explicit approval for external, destructive, or privacy-sensitive actions.',
+    patterns: [/use (any|all|whatever) tools? (you want|needed|available)/i, /run (any|all|whatever) commands? (you want|needed|available)/i, /full access to (shell|filesystem|browser|network|tools?)/i]
+  },
+  {
     id: 'provenance-missing',
     title: 'Missing provenance section',
     category: 'provenance',
