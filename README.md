@@ -70,6 +70,12 @@ promptlintel scan prompts --config promptlintel.config.json
 
 Markdown reports are meant for humans and PR comments. JSON reports are stable enough for CI tooling and simple policy scripts. Each finding includes severity, rule id, file, line, column, snippet, and remediation.
 
+Reports also include severity and category summaries so CI jobs and agent reviewers can quickly separate critical blockers from documentation hygiene.
+
+## Agent Skill
+
+See [SKILL.md](SKILL.md) for the reusable agent workflow, side-effect boundaries, approval requirements, and validation steps for prompt-file linting.
+
 ## Safety model
 
 PromptLintel is a lintel, not a vault door. It reduces common mistakes before prompt files reach an agent, but it does not replace secret scanners, code review, permission boundaries, or runtime human-in-the-loop controls.
