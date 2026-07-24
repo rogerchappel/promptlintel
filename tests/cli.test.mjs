@@ -17,3 +17,17 @@ test('CLI passes safe fixture', () => {
   const parsed = JSON.parse(result.stdout);
   assert.equal(parsed.ok, true);
 });
+
+for (const { name, args, diagnostic } of [
+  { name: 'unsupported rules format', args: ['rules', '--format', 'yaml'], diagnostic: '--format must be markdown or json' },
+  { name: 'missing rules format', args: ['rules', '--format'], diagnostic: '--format requires a value' },
+  { name: 'unknown rules option', args: ['rules', '--verbose'], diagnostic: 'Unknown option: --verbose' },
+]) {
+  test(`CLI rejects ${name}`, () => {
+    const result = spawnSync(process.execPath, ['dist/cli.js', ...args], { encoding: 'utf8' });
+
+    assert.equal(result.status, 2);
+    assert.match(result.stderr, new RegExp(diagnostic.replaceAll('-', '\\-')));
+    assert.equal(result.stdout, '');
+  });
+}
