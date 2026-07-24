@@ -64,8 +64,13 @@ function globToRegExp(glob: string): RegExp {
     const char = glob[i];
     const next = glob[i + 1];
     if (char === '*' && next === '*') {
-      out += '.*';
-      i++;
+      if (glob[i + 2] === '/') {
+        out += '(?:[^/]+/)*';
+        i += 2;
+      } else {
+        out += '.*';
+        i++;
+      }
     } else if (char === '*') {
       out += '[^/]*';
     } else if (char === '?') {
