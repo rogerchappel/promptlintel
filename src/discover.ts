@@ -5,23 +5,37 @@ const promptExtensions = new Set(['.md', '.mdx', '.txt', '.prompt', '.instructio
 
 export async function discoverFiles(inputs: string[], cwd: string): Promise<string[]> {
   const seen = new Set<string>();
+  const unmatched: string[] = [];
   for (const input of inputs) {
-    for (const candidate of await expandInput(input, cwd)) {
+    const candidates = await expandInput(input, cwd);
+    if (candidates.length === 0) unmatched.push(input);
+    for (const candidate of candidates) {
       seen.add(candidate);
     }
+  }
+  if (unmatched.length > 0) {
+    if (unmatched.length === 1) {
+      throw new Error(`No prompt files matched input: ${unmatched[0]}`);
+    }
+    throw new Error(`No prompt files matched inputs:\n${unmatched.map((input) => `- ${input}`).join('\n')}`);
   }
   return [...seen].sort();
 }
 
 async function expandInput(input: string, cwd: string): Promise<string[]> {
-  if (hasGlob(input)) {
-    return expandGlob(input, cwd);
+  try {
+    if (hasGlob(input)) {
+      return await expandGlob(input, cwd);
+    }
+    const resolved = safeResolve(cwd, input);
+    const info = await stat(resolved);
+    if (info.isDirectory()) return walk(resolved);
+    if (info.isFile()) return [resolved];
+    return [];
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return [];
+    throw error;
   }
-  const resolved = safeResolve(cwd, input);
-  const info = await stat(resolved);
-  if (info.isDirectory()) return walk(resolved);
-  if (info.isFile()) return [resolved];
-  return [];
 }
 
 async function walk(dir: string): Promise<string[]> {
