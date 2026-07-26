@@ -29,6 +29,8 @@ promptlintel rules --format markdown
 
 A failing result means at least one finding met or exceeded `--fail-on` (`info`, `low`, `medium`, `high`, or `critical`).
 
+Every explicit file, directory, or glob must match at least one prompt file. An unmatched input—also when combined with matched inputs—prints a diagnostic and exits with status 2 without producing a report, so misspelled CI inputs cannot silently pass.
+
 ## What it catches
 
 - **Prompt injection footguns** — phrases like “ignore previous instructions” or hidden-directive wording.
