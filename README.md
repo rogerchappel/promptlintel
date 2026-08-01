@@ -28,6 +28,7 @@ promptlintel rules --format markdown
 ```
 
 A failing result means at least one finding met or exceeded `--fail-on` (`info`, `low`, `medium`, `high`, or `critical`).
+Invalid commands, options, option values, and configuration exit with status 2 and a diagnostic on stderr.
 
 Every explicit file, directory, or glob must match at least one prompt file. An unmatched input—also when combined with matched inputs—prints a diagnostic and exits with status 2 without producing a report, so misspelled CI inputs cannot silently pass.
 
@@ -67,6 +68,8 @@ Run with:
 ```bash
 promptlintel scan prompts --config promptlintel.config.json
 ```
+
+Configuration is validated before any files are scanned. Unknown fields, invalid severities or types, incomplete custom rules, and invalid regular-expression patterns are rejected instead of being coerced.
 
 ## Reports
 
