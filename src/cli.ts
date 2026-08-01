@@ -16,7 +16,7 @@ try {
     await writeReport(parsed.out, rendered);
     process.exitCode = report.ok ? 0 : 1;
   } else if (command === 'rules') {
-    const format = readOption(args, '--format') ?? 'markdown';
+    const format = parseRulesArgs(args);
     if (format === 'json') {
       process.stdout.write(`${JSON.stringify({ rules: defaultRules.map(stripPatterns) }, null, 2)}\n`);
     } else {
@@ -67,9 +67,21 @@ function parseScanArgs(argv: string[]) {
   return { cwd: process.cwd(), inputs, format, failOn, out, config, noDefaultRules };
 }
 
-function readOption(argv: string[], flag: string): string | undefined {
-  const index = argv.indexOf(flag);
-  return index >= 0 ? argv[index + 1] : undefined;
+function parseRulesArgs(argv: string[]): ReportFormat {
+  let format: ReportFormat = 'markdown';
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i];
+    if (arg === '--format') {
+      const value = argv[++i];
+      if (value !== 'markdown' && value !== 'json') throw new Error('--format must be markdown or json');
+      format = value;
+    } else if (arg.startsWith('-')) {
+      throw new Error(`Unknown option: ${arg}`);
+    } else {
+      throw new Error(`Unexpected argument: ${arg}`);
+    }
+  }
+  return format;
 }
 
 function stripPatterns(rule: unknown): unknown {
