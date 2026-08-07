@@ -75,7 +75,7 @@ test('release workflows preserve validation and publication ordering', () => {
   assert.ok(releaseTag >= 0 && releaseTag < releaseCheck);
   assert.ok(releaseCheck < publish && publish < githubRelease);
 
-  const prospectiveTag = dryRun.indexOf('PROSPECTIVE_TAG: v0.1.0');
+  const prospectiveTag = dryRun.indexOf('PROSPECTIVE_TAG=v$(node -p');
   const dryTag = dryRun.indexOf('npm run release:tag -- "${PROSPECTIVE_TAG}"');
   const dryCheck = dryRun.indexOf('npm run release:check');
   const dryPublish = dryRun.indexOf('npm publish --dry-run --provenance --access public');
