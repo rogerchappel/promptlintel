@@ -6,17 +6,22 @@ It is deliberately boring in the best way: deterministic rules, stable Markdown/
 
 ## Install
 
-```bash
-npm install -D promptlintel
-npx promptlintel scan AGENTS.md prompts/**/*.md
-```
-
-From this repository:
+PromptLintel is not published to npm yet. Until the first release is available,
+install and run it from a checkout:
 
 ```bash
+git clone https://github.com/rogerchappel/promptlintel.git
+cd promptlintel
 npm install
 npm run build
 node dist/cli.js scan examples/fixtures --fail-on high
+```
+
+After the first npm release, the supported registry install will be:
+
+```bash
+npm install -D promptlintel
+npx promptlintel scan AGENTS.md prompts/**/*.md
 ```
 
 ## Quick start
