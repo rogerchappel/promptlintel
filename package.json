@@ -4,7 +4,7 @@
   "description": "Local prompt-file linter for prompt-injection footguns, secret-like strings, unsafe tool wording, and missing provenance.",
   "type": "module",
   "bin": {
-    "promptlintel": "./dist/cli.js"
+    "promptlintel": "dist/cli.js"
   },
   "main": "./dist/index.js",
   "exports": {
@@ -26,6 +26,8 @@
     "build": "tsc && node scripts/make-executable.mjs",
     "smoke": "bash scripts/smoke.sh",
     "package:smoke": "npm pack --dry-run",
+    "release:tag": "node scripts/validate-release-tag.mjs",
+    "test:release": "node --test tests/release.test.mjs",
     "release:check": "npm test && npm run check && npm run build && npm run smoke && npm run package:smoke"
   },
   "keywords": [

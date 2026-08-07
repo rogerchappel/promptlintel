@@ -35,10 +35,14 @@ jobs:
           npm --prefix /tmp/releasebox run build
       - name: ReleaseBox readiness check
         run: node /tmp/releasebox/bin/releasebox.js check .
+      - name: Validate release tag
+        run: npm run release:tag -- "${GITHUB_REF_NAME}"
       - name: Run release checks
         run: npm run release:check
       - name: Build package
         run: npm pack
+      - name: Publish package to npm
+        run: npm publish --provenance --access public *.tgz
       - name: Generate release notes
         run: node /tmp/releasebox/bin/releasebox.js notes . > RELEASE_NOTES.md
       - name: Create GitHub release
