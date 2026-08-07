@@ -4,7 +4,7 @@
   "description": "Local prompt-file linter for prompt-injection footguns, secret-like strings, unsafe tool wording, and missing provenance.",
   "type": "module",
   "bin": {
-    "promptlintel": "./dist/cli.js"
+    "promptlintel": "dist/cli.js"
   },
   "main": "./dist/index.js",
   "exports": {

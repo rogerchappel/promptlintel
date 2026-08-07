@@ -46,6 +46,11 @@ test('packed package installs and runs in a clean consumer', () => {
     const [{ filename }] = JSON.parse(tarballName);
     const tarball = join(root, filename);
 
+    const packedManifest = JSON.parse(
+      execFileSync('tar', ['-xOf', tarball, 'package/package.json'], { encoding: 'utf8' }),
+    );
+    assert.equal(packedManifest.bin.promptlintel, 'dist/cli.js');
+
     execFileSync('npm', ['init', '--yes'], { cwd: workspace, stdio: 'ignore' });
     execFileSync('npm', ['install', '--ignore-scripts', tarball], {
       cwd: workspace,
