@@ -36,6 +36,7 @@ A failing result means at least one finding met or exceeded `--fail-on` (`info`,
 Invalid commands, options, option values, and configuration exit with status 2 and a diagnostic on stderr.
 
 Every explicit file, directory, or glob must match at least one prompt file. An unmatched input—also when combined with matched inputs—prints a diagnostic and exits with status 2 without producing a report, so misspelled CI inputs cannot silently pass.
+Recursive globstars match zero or more directory levels, so `skills/**/*.md` includes both `skills/root.md` and files in nested directories.
 
 ## What it catches
 

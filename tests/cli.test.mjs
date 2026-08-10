@@ -1,12 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { mkdtempSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 
-function cli(args) {
-  return spawnSync(process.execPath, ['dist/cli.js', ...args], { encoding: 'utf8' });
+const cliPath = resolve('dist/cli.js');
+
+function cli(args, options = {}) {
+  return spawnSync(process.execPath, [cliPath, ...args], { encoding: 'utf8', ...options });
 }
 
 test('CLI emits JSON findings for risky fixture', () => {
@@ -112,4 +114,28 @@ test('CLI scans a matched explicit glob', () => {
   assert.equal(result.status, 0, result.stderr);
   const parsed = JSON.parse(result.stdout);
   assert.deepEqual(parsed.files, ['examples/fixtures/safe-agent.md']);
+});
+
+test('CLI globstar scans root-level and nested files in deterministic deduplicated order', () => {
+  const directory = mkdtempSync(join(tmpdir(), 'promptlintel-globstar-'));
+  writeFileSync(join(directory, 'root.md'), 'Owner: test\nSafety: do not perform external actions.\n');
+  const nested = join(directory, 'nested');
+  mkdirSync(nested);
+  writeFileSync(join(nested, 'child.md'), 'Owner: test\nSafety: do not perform external actions.\n');
+
+  const result = cli(['scan', '**/*.md', 'root.md', '--format', 'json'], { cwd: directory });
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.deepEqual(JSON.parse(result.stdout).files, ['nested/child.md', 'root.md']);
+});
+
+test('CLI preserves exit 2 and no report for a genuinely unmatched globstar', () => {
+  const directory = mkdtempSync(join(tmpdir(), 'promptlintel-globstar-unmatched-'));
+  writeFileSync(join(directory, 'root.md'), 'Owner: test\nSafety: do not perform external actions.\n');
+
+  const result = cli(['scan', '**/*.mdx', '--format', 'json'], { cwd: directory });
+
+  assert.equal(result.status, 2);
+  assert.equal(result.stdout, '');
+  assert.match(result.stderr, /No prompt files matched input: \*\*\/\*\.mdx/);
 });
