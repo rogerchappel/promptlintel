@@ -6,6 +6,13 @@ import { join, resolve } from 'node:path';
 import test from 'node:test';
 
 const root = resolve(import.meta.dirname, '..');
+const requiredPublishedGuides = [
+  'SKILL.md',
+  'docs/ci.md',
+  'docs/configuration.md',
+  'docs/release-candidate.md',
+  'docs/rules.md',
+];
 
 function runTag(tag) {
   return spawnSync(process.execPath, ['scripts/validate-release-tag.mjs', tag], {
@@ -33,6 +40,19 @@ test('release tag is required', () => {
 
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /Release tag is required/);
+});
+
+test('packed package contains the required user guides', () => {
+  const output = execFileSync('npm', ['pack', '--dry-run', '--json'], {
+    cwd: root,
+    encoding: 'utf8',
+  });
+  const [{ files }] = JSON.parse(output);
+  const packedPaths = new Set(files.map(({ path }) => path));
+
+  for (const guide of requiredPublishedGuides) {
+    assert.ok(packedPaths.has(guide), `${guide} is missing from the npm package`);
+  }
 });
 
 test('packed package installs and runs in a clean consumer', () => {
