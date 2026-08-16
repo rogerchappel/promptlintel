@@ -37,6 +37,7 @@ Invalid commands, options, option values, and configuration exit with status 2 a
 
 Every explicit file, directory, or glob must match at least one prompt file. An unmatched input—also when combined with matched inputs—prints a diagnostic and exits with status 2 without producing a report, so misspelled CI inputs cannot silently pass.
 Recursive globstars match zero or more directory levels, so `skills/**/*.md` includes both `skills/root.md` and files in nested directories.
+Globs support `*`, `**`, `?`, and character classes: `[ab]` matches either character, `[a-z]` matches a range, and `[!ab]` or `[^ab]` matches any character except those listed. A class cannot contain `/`; empty, unclosed, or otherwise unsupported bracket syntax is matched literally.
 
 ## What it catches
 

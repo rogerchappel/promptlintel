@@ -89,9 +89,43 @@ function globToRegExp(glob: string): RegExp {
       out += '[^/]*';
     } else if (char === '?') {
       out += '[^/]';
+    } else if (char === '[') {
+      const characterClass = parseCharacterClass(glob, i);
+      if (characterClass) {
+        out += characterClass.source;
+        i = characterClass.end;
+      } else {
+        out += '\\[';
+      }
     } else {
       out += char.replace(/[|\\{}()[\]^$+?.]/g, '\\$&');
     }
   }
   return new RegExp(`${out}$`);
+}
+
+function parseCharacterClass(glob: string, start: number): { source: string; end: number } | undefined {
+  const end = glob.indexOf(']', start + 1);
+  if (end === -1) return undefined;
+
+  let content = glob.slice(start + 1, end);
+  if (content.length === 0 || content.includes('/')) return undefined;
+
+  let negated = false;
+  if (content[0] === '!' || content[0] === '^') {
+    negated = true;
+    content = content.slice(1);
+  }
+  if (content.length === 0) return undefined;
+
+  const escaped = content
+    .replaceAll('\\', '\\\\')
+    .replaceAll(']', '\\]');
+  const source = `[${negated ? '^' : ''}${escaped}]`;
+  try {
+    new RegExp(source);
+  } catch {
+    return undefined;
+  }
+  return { source, end };
 }

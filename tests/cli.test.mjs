@@ -129,6 +129,39 @@ test('CLI globstar scans root-level and nested files in deterministic deduplicat
   assert.deepEqual(JSON.parse(result.stdout).files, ['nested/child.md', 'root.md']);
 });
 
+test('CLI character classes support sets, ranges, and negation with deterministic deduplication', () => {
+  const directory = mkdtempSync(join(tmpdir(), 'promptlintel-character-class-'));
+  for (const name of ['a.md', 'b.md', 'c.md']) {
+    writeFileSync(join(directory, name), 'Owner: test\nSafety: do not perform external actions.\n');
+  }
+
+  const result = cli(['scan', '[ab].md', '[a-b].md', '[!c].md', '--format', 'json'], { cwd: directory });
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.deepEqual(JSON.parse(result.stdout).files, ['a.md', 'b.md']);
+});
+
+test('CLI reports unmatched character-class globs', () => {
+  const directory = mkdtempSync(join(tmpdir(), 'promptlintel-character-class-unmatched-'));
+  writeFileSync(join(directory, 'a.md'), 'Owner: test\nSafety: do not perform external actions.\n');
+
+  const result = cli(['scan', '[bc].md', '--format', 'json'], { cwd: directory });
+
+  assert.equal(result.status, 2);
+  assert.equal(result.stdout, '');
+  assert.match(result.stderr, /No prompt files matched input: \[bc\]\.md/);
+});
+
+test('CLI treats an unclosed character class as literal text', () => {
+  const directory = mkdtempSync(join(tmpdir(), 'promptlintel-character-class-malformed-'));
+  writeFileSync(join(directory, '[a.md'), 'Owner: test\nSafety: do not perform external actions.\n');
+
+  const result = cli(['scan', '[a.md', '--format', 'json'], { cwd: directory });
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.deepEqual(JSON.parse(result.stdout).files, ['[a.md']);
+});
+
 test('CLI preserves exit 2 and no report for a genuinely unmatched globstar', () => {
   const directory = mkdtempSync(join(tmpdir(), 'promptlintel-globstar-unmatched-'));
   writeFileSync(join(directory, 'root.md'), 'Owner: test\nSafety: do not perform external actions.\n');
