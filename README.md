@@ -34,6 +34,7 @@ promptlintel rules --format markdown
 
 A failing result means at least one finding met or exceeded `--fail-on` (`info`, `low`, `medium`, `high`, or `critical`).
 Invalid commands, options, option values, and configuration exit with status 2 and a diagnostic on stderr.
+When `--out` targets a missing directory, PromptLintel creates every required parent directory before writing the report. Output is written to the file instead of stdout, without changing scan or finding exit semantics.
 
 Every explicit file, directory, or glob must match at least one prompt file. An unmatched input—also when combined with matched inputs—prints a diagnostic and exits with status 2 without producing a report, so misspelled CI inputs cannot silently pass.
 Recursive globstars match zero or more directory levels, so `skills/**/*.md` includes both `skills/root.md` and files in nested directories.
