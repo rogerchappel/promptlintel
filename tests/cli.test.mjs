@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 
@@ -78,6 +78,30 @@ test('CLI passes safe fixture', () => {
   assert.equal(result.status, 0, result.stderr);
   const parsed = JSON.parse(result.stdout);
   assert.equal(parsed.ok, true);
+});
+
+test('CLI creates missing parent directories for --out', () => {
+  const directory = mkdtempSync(join(tmpdir(), 'promptlintel-out-'));
+  writeFileSync(join(directory, 'safe.md'), 'Owner: test\nSafety: do not perform external actions.\n');
+  const output = join('reports', 'nested', 'report.json');
+
+  const result = cli(['scan', 'safe.md', '--format', 'json', '--out', output], { cwd: directory });
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.stdout, '');
+  assert.equal(JSON.parse(readFileSync(join(directory, output), 'utf8')).ok, true);
+});
+
+test('CLI writes --out into an existing directory', () => {
+  const directory = mkdtempSync(join(tmpdir(), 'promptlintel-out-existing-'));
+  writeFileSync(join(directory, 'safe.md'), 'Owner: test\nSafety: do not perform external actions.\n');
+  mkdirSync(join(directory, 'reports'));
+
+  const result = cli(['scan', 'safe.md', '--out', join('reports', 'report.md')], { cwd: directory });
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.stdout, '');
+  assert.match(readFileSync(join(directory, 'reports', 'report.md'), 'utf8'), /^# PromptLintel report/);
 });
 
 test('CLI rejects an unmatched file input', () => {
