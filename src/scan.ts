@@ -1,4 +1,5 @@
-import { writeFile } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { dirname } from 'node:path';
 import { loadConfig, mergeRules } from './config.js';
 import { discoverFiles } from './discover.js';
 import { lintFiles } from './engine.js';
@@ -28,6 +29,7 @@ export async function scan(options: ScanOptions): Promise<ScanReport> {
 
 export async function writeReport(out: string | undefined, rendered: string): Promise<void> {
   if (out) {
+    await mkdir(dirname(out), { recursive: true });
     await writeFile(out, rendered, 'utf8');
     return;
   }
