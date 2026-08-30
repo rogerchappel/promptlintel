@@ -107,3 +107,21 @@ test('release workflows preserve validation and publication ordering', () => {
   assert.ok(prospectiveTag >= 0 && prospectiveTag < dryTag);
   assert.ok(dryTag < dryCheck && dryCheck < dryPublish);
 });
+
+test('CI validates every supported Node major', () => {
+  const packageJson = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
+  const ciWorkflow = readFileSync(join(root, '.github/workflows/ci.yml'), 'utf8');
+  const engineFloor = Number(packageJson.engines.node.match(/\d+/)?.[0]);
+  assert.ok(Number.isInteger(engineFloor), 'package.json must declare a Node engine floor');
+
+  const matrix = ciWorkflow.match(/node-version:\s*\[([^\]]+)\]/)?.[1];
+  assert.ok(matrix, 'CI must declare a node-version matrix');
+
+  const ciMajors = matrix.match(/\d+/g)?.map(Number) ?? [];
+  assert.deepEqual(ciMajors, [engineFloor, 22, 24]);
+  assert.match(ciWorkflow, /fail-fast:\s*false/);
+  assert.match(ciWorkflow, /actions\/setup-node@v\d+/);
+  assert.match(ciWorkflow, /node-version:\s*\$\{\{\s*matrix\.node-version\s*\}\}/);
+  assert.match(ciWorkflow, /run:\s*npm ci/);
+  assert.match(ciWorkflow, /run:\s*npm run release:check/);
+});

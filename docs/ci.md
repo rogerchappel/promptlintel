@@ -1,5 +1,10 @@
 # CI usage
 
+The repository's own CI runs `npm ci` and the complete `npm run release:check`
+suite on Node.js 20, 22, and 24. The matrix includes the `node >=20` package
+engine floor and the current supported LTS majors, and it keeps all runtime jobs
+running when one fails so compatibility regressions are visible together.
+
 PromptLintel works as a normal local command in CI:
 
 ```yaml
