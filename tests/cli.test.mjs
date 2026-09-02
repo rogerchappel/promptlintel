@@ -52,6 +52,46 @@ test('valid custom rules are loaded from config', () => {
   assert.equal(JSON.parse(result.stdout).failOn, 'low');
 });
 
+test('CLI --fail-on overrides the config threshold only when explicitly supplied', () => {
+  const directory = mkdtempSync(join(tmpdir(), 'promptlintel-precedence-'));
+  const prompt = join(directory, 'prompt.md');
+  const config = join(directory, 'config.json');
+  writeFileSync(prompt, 'unsafe marker\n');
+  writeFileSync(config, JSON.stringify({
+    includeDefaultRules: false,
+    failOn: 'low',
+    rules: [{
+      id: 'local-rule',
+      title: 'Local rule',
+      category: 'safety',
+      severity: 'low',
+      description: 'Test rule',
+      remediation: 'Remove marker',
+      patterns: ['unsafe marker']
+    }]
+  }));
+
+  const configured = cli(
+    ['scan', 'prompt.md', '--format', 'json', '--config', 'config.json'],
+    { cwd: directory }
+  );
+  assert.equal(configured.status, 1, configured.stderr);
+  assert.deepEqual(
+    { ok: JSON.parse(configured.stdout).ok, failOn: JSON.parse(configured.stdout).failOn },
+    { ok: false, failOn: 'low' }
+  );
+
+  const overridden = cli(
+    ['scan', 'prompt.md', '--format', 'json', '--config', 'config.json', '--fail-on', 'critical'],
+    { cwd: directory }
+  );
+  assert.equal(overridden.status, 0, overridden.stderr);
+  assert.deepEqual(
+    { ok: JSON.parse(overridden.stdout).ok, failOn: JSON.parse(overridden.stdout).failOn },
+    { ok: true, failOn: 'critical' }
+  );
+});
+
 for (const [name, config, diagnostic] of [
   ['a non-object config', [], 'config must be a JSON object'],
   ['invalid failOn', { failOn: 'never' }, 'config.failOn must be'],
