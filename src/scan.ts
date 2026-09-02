@@ -9,7 +9,7 @@ import type { Finding, RuleCategory, ScanOptions, ScanReport, Severity } from '.
 
 export async function scan(options: ScanOptions): Promise<ScanReport> {
   const config = await loadConfig(options.config, options.cwd);
-  const failOn = config.failOn ?? options.failOn;
+  const failOn = options.failOn ?? config.failOn ?? 'high';
   const rules = mergeRules(defaultRules, config, options.noDefaultRules);
   const files = await discoverFiles(options.inputs, options.cwd);
   const findings = await lintFiles(files, rules, options.cwd);

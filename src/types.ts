@@ -31,7 +31,7 @@ export interface ScanOptions {
   cwd: string;
   inputs: string[];
   format: ReportFormat;
-  failOn: Severity;
+  failOn?: Severity;
   out?: string;
   config?: string;
   noDefaultRules: boolean;

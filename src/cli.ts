@@ -33,7 +33,7 @@ try {
 function parseScanArgs(argv: string[]) {
   const inputs: string[] = [];
   let format: ReportFormat = 'markdown';
-  let failOn: Severity = 'high';
+  let failOn: Severity | undefined;
   let out: string | undefined;
   let config: string | undefined;
   let noDefaultRules = false;
