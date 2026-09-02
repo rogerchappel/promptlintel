@@ -78,6 +78,7 @@ promptlintel scan prompts --config promptlintel.config.json
 ```
 
 Configuration is validated before any files are scanned. Unknown fields, invalid severities or types, incomplete custom rules, and invalid regular-expression patterns are rejected instead of being coerced.
+The configuration `failOn` value is used when `--fail-on` is omitted. An explicitly supplied `--fail-on` value takes precedence for that scan.
 
 ## Reports
 
