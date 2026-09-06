@@ -17,19 +17,12 @@ npm run build
 node dist/cli.js scan examples/fixtures --fail-on high
 ```
 
-After the first npm release, the supported registry install will be:
-
-```bash
-npm install -D promptlintel
-npx promptlintel scan AGENTS.md prompts/**/*.md
-```
-
 ## Quick start
 
 ```bash
-promptlintel scan AGENTS.md skills/**/*.md --out promptlintel-report.md
-promptlintel scan prompts/ --format json --fail-on high
-promptlintel rules --format markdown
+node dist/cli.js scan AGENTS.md skills/**/*.md --out promptlintel-report.md
+node dist/cli.js scan prompts/ --format json --fail-on high
+node dist/cli.js rules --format markdown
 ```
 
 A failing result means at least one finding met or exceeded `--fail-on` (`info`, `low`, `medium`, `high`, or `critical`).
