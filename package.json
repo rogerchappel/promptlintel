@@ -28,7 +28,8 @@
     "package:smoke": "npm pack --dry-run",
     "release:tag": "node scripts/validate-release-tag.mjs",
     "test:release": "node --test tests/release.test.mjs",
-    "release:check": "npm test && npm run check && npm run build && npm run smoke && npm run package:smoke"
+    "docs:check": "node --test tests/readme-install.test.mjs",
+    "release:check": "npm test && npm run check && npm run build && npm run docs:check && npm run smoke && npm run package:smoke"
   },
   "keywords": [
     "prompt-injection",
