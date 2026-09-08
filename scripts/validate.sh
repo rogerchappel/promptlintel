@@ -120,7 +120,42 @@ run_package_script() {
   esac
 }
 
-printf 'Checking ../promptlintel required files...\n'
+check_agent_metadata() {
+  node <<'NODE'
+const fs = require('node:fs');
+
+const agents = fs.readFileSync('AGENTS.md', 'utf8');
+const required = new Map([
+  ['Project', 'promptlintel'],
+  ['Repository', 'rogerchappel/promptlintel'],
+  ['Primary maintainer', 'Roger Chappel'],
+  ['Default branch', 'main'],
+  ['Package manager', 'npm'],
+]);
+
+for (const [field, expected] of required) {
+  const match = agents.match(new RegExp('^- ' + field + ': `([^`]*)`$', 'm'));
+  if (!match) throw new Error(`missing AGENTS.md metadata field: ${field}`);
+
+  const value = match[1].trim();
+  if (!value || /^(?:todo|tbd|unknown|placeholder)$/i.test(value)) {
+    throw new Error(`invalid AGENTS.md metadata value for ${field}`);
+  }
+  if (value !== expected) {
+    throw new Error(`AGENTS.md ${field} must be ${expected}`);
+  }
+}
+
+if (/\.\.\/promptlintel|\/Users\/[^\s`]*promptlintel/.test(agents)) {
+  throw new Error('AGENTS.md contains a machine-relative project label');
+}
+if (!agents.includes('Branch from the latest `main` before editing.')) {
+  throw new Error('AGENTS.md branch instruction must name main');
+}
+NODE
+}
+
+printf 'Checking promptlintel required files...\n'
 
 check_file "README.md"
 check_file "AGENTS.md"
@@ -129,11 +164,13 @@ check_file "SECURITY.md"
 check_file ".github/pull_request_template.md"
 check_file "scripts/validate.sh"
 
-printf '\nChecking ../promptlintel required directories...\n'
+printf '\nChecking promptlintel required directories...\n'
 
 check_dir ".github"
 check_dir "docs"
 check_dir "scripts"
+
+run_check "canonical AGENTS.md metadata" check_agent_metadata
 
 printf '\nRunning local project checks where present...\n'
 
