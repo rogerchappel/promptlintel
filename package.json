@@ -29,7 +29,7 @@
     "release:tag": "node scripts/validate-release-tag.mjs",
     "test:release": "node --test tests/release.test.mjs",
     "docs:check": "node --test tests/readme-install.test.mjs",
-    "release:check": "npm test && npm run check && npm run build && npm run docs:check && npm run smoke && npm run package:smoke"
+    "release:check": "npm test && npm run test:release && npm run check && npm run build && npm run docs:check && npm run smoke && npm run package:smoke"
   },
   "keywords": [
     "prompt-injection",
